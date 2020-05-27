@@ -37,9 +37,9 @@ public:
   void setKey(const Key& K) { k = K; } // Sets the node's key
 
   // Functions to set and return the children & context variables
-  void setIsLcThreaded(bool b) { isLcThreaded = b; } // Sets the boolean indicating the context of the left child node
+  void lcIsThreaded(bool b) { isLcThreaded = b; } // Sets the boolean indicating the context of the left child node
   bool learnIfLcIsThreaded() { return isLcThreaded; } // Returns true if the left child pointer is threaded
-  void setIsRcThreaded(bool b) { isRcThreaded = b; } // Sets the boolean indicating the context of the right child node
+  void rcIsThreaded(bool b) { isRcThreaded = b; } // Sets the boolean indicating the context of the right child node
   bool learnIfRcIsThreaded() { return isRcThreaded; } // Returns true if the right child pointer is threaded
   inline BSTNode* left() const { return lc; } // Returns the left child (OR the inorder predecessor)
   void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; } // Sets the left child (OR the inorder predecessor)
