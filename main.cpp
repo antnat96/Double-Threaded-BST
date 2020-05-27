@@ -18,7 +18,19 @@ int main(int argc, char** argv) {
 
 	BST<int, string> myBST;
 
+	cout << "Size of my BST is " << myBST.size() << endl;
+
+	const int testInt = 5;
+	string testString = "Five";
+
+	myBST.insert(testInt, testString);
+
+	cout << "Size of my BST is " << myBST.size() << endl;
+
 	myBST.clear();
+
+	cout << "Size of my BST is " << myBST.size() << endl;
+
 
 	return 0;
 }

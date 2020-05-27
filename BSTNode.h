@@ -68,7 +68,6 @@ public:
 	  int numOfChildren = 0;
 	  if (lc != NULL) { numOfChildren++; }
 	  if (rc != NULL) { numOfChildren++; }
-	  // Sum is now the number of children
 
 	  // Count the number of children that are threaded
 	  int numOfThreadedChildren = 0;
