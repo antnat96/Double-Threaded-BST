@@ -18,7 +18,9 @@ class BSTNode : public BinNode<E> {
 private:
   Key k;                  // The node's key
   E it;                   // The node's value
+  bool isLcThreaded;	  // Gives context for the the nature of the left pointer
   BSTNode* lc;            // Pointer to left child OR pointer to the inorder predecessor
+  bool isRcThreaded;	  // Gives context for the the nature of the right pointer
   BSTNode* rc;            // Pointer to right child OR pointer to the inorder successor
 
 public:
