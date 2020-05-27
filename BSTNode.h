@@ -57,12 +57,28 @@ public:
   inline BSTNode* right() const { return rc; } // Returns the right child (OR the inorder successor)
   void setRight(BinNode<E>* b) { rc = (BSTNode*)b; } // Sets the right child (OR the inorder successor)
 
-  // Return true if both children are NULL or if both child pointers are threads, false otherwise
+  // Return true if the node is a leaf, false otherwise
   bool isLeaf() {
-	  if (((lc == NULL) && (rc == NULL)) || (isLcThreaded && isRcThreaded)) {
-		  return true; 
+	  // If both children are null
+	  if ((lc == NULL) && (rc == NULL)) {
+		  return true; // Node is obviously a leaf
 	  }
-	  return false;
+
+	  // If not, count how many children there are
+	  int numOfChildren = 0;
+	  if (lc != NULL) { numOfChildren++; }
+	  if (rc != NULL) { numOfChildren++; }
+	  // Sum is now the number of children
+
+	  // Count the number of children that are threaded
+	  int numOfThreadedChildren = 0;
+	  if (isLcThreaded) { numOfThreadedChildren++; }
+	  if (isRcThreaded) { numOfThreadedChildren++; }
+
+	  // Check if all children are threaded children
+	  if (numOfChildren == numOfThreadedChildren) { return true; } // If they are, the node is a leaf
+
+	  return false; // Otherwise, the node is not a leaf
   }
 };
 
