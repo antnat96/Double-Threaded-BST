@@ -131,9 +131,37 @@ template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
   if (root == NULL)  // Empty tree: create node
     return new BSTNode<Key, E>(k, it, NULL, NULL);
-  if (k < root->key())
-    root->setLeft(inserthelp(root->left(), k, it));
-  else root->setRight(inserthelp(root->right(), k, it));
+  if (k < root->key()) { // If the node is getting inserted as a left child
+	  // if (hasInorderPredecessor(root->left()) {
+	  //	root->lcIsThreaded(true);
+	  // }
+	  // if (hasInorderSuccessor(root->left()) {
+	  //	root->rcIsThreaded(true);
+	  // }
+	  root->setLeft(inserthelp(root->left(), k, it)); // Set as next possible left child
+	  // if we are setting it as the next possible left child, that means we'll have to
+	  // travel all the way down left and right children as far as we can
+	  // which leaves us with a left leaf
+	  // Since it's a left leaf, it will definitely have a successor (or rcThread)
+	  // But it will only have a predecessor (or lcThread) if it's not the left outermost
+	  // How to test to see if left outermost?
+  }
+  else { 
+	  // if (hasInorderPredecessor(root->left()) {
+	  //	root->lcIsThreaded(true);
+	  // }
+	  // if (hasInorderSuccessor(root->left()) {
+	  //	root->rcIsThreaded(true);
+	  // }
+	  root->setRight(inserthelp(root->right(), k, it)); // Set as next possible right child
+	  // if we are setting it as the next possible right child, that means we'll have to
+	  // travel all the way down left and right children as far as we can
+	  // which leaves us with a right leaf
+	  // Since it's a right leaf, it will definitely have a predecessor (or lcThread)
+	  // But it will only have a successor (or rcThread) if it's not the right outermost
+	  // How to test to see if right outermost?
+	  // This is a job for the hasInorderPredecessor and hasInorderSuccessor functions
+  }
   return root;       // Return tree with node inserted
 }
 
@@ -219,24 +247,24 @@ printhelp(BSTNode<Key, E>* root, int level) const {
 template <typename Key, typename E>
 bool BST<Key, E>::
 hasInorderPredecessor(BSTNode<Key, E>* root) {
-	// if (has in order predecessor) { 
-	// return true; 
-	// }
-	// else {
-	// return false;
-	// }
+	//int smallestKey = getMin(root)->key();
+	//int currentKey = root->key();
+	//if (currentKey > smallestKey) {
+	//	return true;
+	//}
+	//return false;
 }
 
 // Check if there is an in order successor
 template <typename Key, typename E>
 bool BST<Key, E>::
 hasInorderSuccessor(BSTNode<Key, E>* root) {
-	// if (has in order successor) { 
-	// return true; 
-	// }
-	// else {
-	// return false;
-	// }
+	//int smallestKey = getMin(root)->key();
+	//int currentKey = root->key();
+	//if (currentKey < smallestKey) {
+	//	return true;
+	//}
+	//return false;
 }
 
 #endif
