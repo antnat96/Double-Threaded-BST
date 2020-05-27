@@ -31,10 +31,10 @@ public:
   ~BSTNode() {}             // Destructor
 
   // Functions to set and return the value and key
-  E& element() { return it; }
-  void setElement(const E& e) { it = e; }
-  Key& key() { return k; }
-  void setKey(const Key& K) { k = K; }
+  E& element() { return it; } // Returns the value
+  void setElement(const E& e) { it = e; } // Sets the node's value
+  Key& key() { return k; } // Returns the key
+  void setKey(const Key& K) { k = K; } // Sets the node's key
 
   // Functions to set and return the children
   inline BSTNode* left() const { return lc; }
