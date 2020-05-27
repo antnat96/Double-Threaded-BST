@@ -18,9 +18,9 @@ class BSTNode : public BinNode<E> {
 private:
   Key k;                  // The node's key
   E it;                   // The node's value
-  bool isLcThreaded;	  // Gives context for the the nature of the left pointer (if it is threaded or not)
+  bool isLcThreaded;	  // Gives context for the the nature of the left pointer (set to true if it is threaded)
   BSTNode* lc;            // Pointer to left child OR pointer to the inorder predecessor
-  bool isRcThreaded;	  // Gives context for the the nature of the right pointer (if it is threaded or not)
+  bool isRcThreaded;	  // Gives context for the the nature of the right pointer (set to true if it is threaded)
   BSTNode* rc;            // Pointer to right child OR pointer to the inorder successor
 
 public:
@@ -28,7 +28,12 @@ public:
   BSTNode() { lc = rc = NULL; }
   BSTNode(Key K, E e, bool leftContext = false, BSTNode* l =NULL, bool rightContext = false, BSTNode* r =NULL)
   {
-	  k = K; it = e; isLcThreaded = leftContext; lc = l; isRcThreaded = rightContext; rc = r;
+	  k = K; 
+	  it = e; 
+	  isLcThreaded = leftContext; 
+	  lc = l; 
+	  isRcThreaded = rightContext; 
+	  rc = r;
   }
   ~BSTNode() {}             // Destructor
 
@@ -42,11 +47,11 @@ public:
   void lcIsThreaded(bool b) { // Indicates context of left child - if true, the left child points to an inorder predecessor
 	  isLcThreaded = b; 
   } 
-  bool learnIfLcIsThreaded() { return isLcThreaded; } // Returns true if the left child pointer is threaded
+  bool lcThreadStatus() { return isLcThreaded; } // Returns true if the left child pointer is threaded
   void rcIsThreaded(bool b) { // Indicates context of right child - if true, the right child points to an inorder successor
 	  isRcThreaded = b; 
   } 
-  bool learnIfRcIsThreaded() { return isRcThreaded; } // Returns true if the right child pointer is threaded
+  bool rcThreadStatus() { return isRcThreaded; } // Returns true if the right child pointer is threaded
   inline BSTNode* left() const { return lc; } // Returns the left child (OR the inorder predecessor)
   void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; } // Sets the left child (OR the inorder predecessor)
   inline BSTNode* right() const { return rc; } // Returns the right child (OR the inorder successor)
