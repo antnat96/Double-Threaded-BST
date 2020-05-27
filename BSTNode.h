@@ -37,13 +37,13 @@ public:
   void setKey(const Key& K) { k = K; } // Sets the node's key
 
   // Functions to set and return the children
-  inline BSTNode* left() const { return lc; }
-  void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; }
-  inline BSTNode* right() const { return rc; }
-  void setRight(BinNode<E>* b) { rc = (BSTNode*)b; }
+  inline BSTNode* left() const { return lc; } // Returns the left child (OR the inorder predecessor)
+  void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; } // Sets the left child (OR the inorder predecessor)
+  inline BSTNode* right() const { return rc; } // Returns the right child (OR the inorder successor)
+  void setRight(BinNode<E>* b) { rc = (BSTNode*)b; } // Sets the right child (OR the inorder successor)
 
   // Return true if it is a leaf, false otherwise
-  bool isLeaf() { return (lc == NULL) && (rc == NULL); }
+  bool isLeaf() { return (lc == NULL) && (rc == NULL); } // Need to edit, should return true if (((lc == NULL) && (rc == NULL)) || (isLcThreaded && isRcThreaded))
 };
 
 #endif
