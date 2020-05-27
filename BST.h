@@ -27,8 +27,7 @@ private:
 
   // Private "helper" functions
   void clearhelp(BSTNode<Key, E>*);
-  BSTNode<Key,E>* inserthelp(BSTNode<Key, E>*,
-                              const Key&, const E&);
+  BSTNode<Key,E>* inserthelp(BSTNode<Key, E>*, const Key&, const E&);
   BSTNode<Key,E>* deletemin(BSTNode<Key, E>*);
   BSTNode<Key,E>* getmin(BSTNode<Key, E>*);
   BSTNode<Key,E>* removehelp(BSTNode<Key, E>*, const Key&);
@@ -37,15 +36,24 @@ private:
   void vist(BSTNode<Key, E>*) const;
 
 public:
-  BST() { root = NULL; nodecount = 0; }  // Constructor
+	BST() {  // Constructor
+		cout << "<------CREATED------>" << endl; 
+		root = NULL; 
+		nodecount = 0; 
+	} 
   
   //Note from Prof Sipantzi -- I've commented out the destructor
   //since you would have to change clearhelp() to make it work with
   //doubly-threaded trees and that is not part of the assignment.
   //~BST() { clearhelp(root); }            // Destructor
 
-  void clear()   // Reinitialize tree
-    { clearhelp(root); root = NULL; nodecount = 0; }
+  void clear() // Reinitialize tree
+  {
+	  cout << "<------CLEARED------>" << endl; 
+	  clearhelp(root); 
+	  root = NULL; 
+	  nodecount = 0;
+  }
 
   // Insert a record into the tree.
   // k Key value of the record.
@@ -84,10 +92,14 @@ public:
   // Return some record matching "k".
   // Return true if such exists, false otherwise. If
   // multiple records match "k", return an arbitrary one.
-  E* find(const Key& k) const { return findhelp(root, k); }
+  E* find(const Key& k) const { 
+	  return findhelp(root, k); 
+  }
 
   // Return the number of records in the dictionary.
-  int size() { return nodecount; }
+  int size() { 
+	  return nodecount; 
+  }
 
   void print() const { // Print the contents of the BST
     if (root == NULL) cout << "The BST is empty.\n";

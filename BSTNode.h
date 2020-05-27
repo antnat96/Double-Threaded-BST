@@ -18,8 +18,8 @@ class BSTNode : public BinNode<E> {
 private:
   Key k;                  // The node's key
   E it;                   // The node's value
-  BSTNode* lc;            // Pointer to left child
-  BSTNode* rc;            // Pointer to right child
+  BSTNode* lc;            // Pointer to left child OR pointer to the inorder predecessor
+  BSTNode* rc;            // Pointer to right child OR pointer to the inorder successor
 
 public:
   // Two constructors -- with and without initial values

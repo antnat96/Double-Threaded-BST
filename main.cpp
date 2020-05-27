@@ -16,5 +16,9 @@ int main(int argc, char** argv) {
 
 	cout << "Anthony Natale -- CSIS 215 Programming Assignment 2 -- Double Threaded Binary Tree" << "\n" << endl;
 
+	BST<int, string> myBST;
+
+	myBST.clear();
+
 	return 0;
 }
