@@ -128,8 +128,7 @@ clearhelp(BSTNode<Key, E>* root) {
 
 // Insert a node into the BST, returning the updated tree
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::inserthelp(
-    BSTNode<Key, E>* root, const Key& k, const E& it) {
+BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
   if (root == NULL)  // Empty tree: create node
     return new BSTNode<Key, E>(k, it, NULL, NULL);
   if (k < root->key())
@@ -220,14 +219,24 @@ printhelp(BSTNode<Key, E>* root, int level) const {
 template <typename Key, typename E>
 bool BST<Key, E>::
 hasInorderPredecessor(BSTNode<Key, E>* root) {
-	// if (has in order predecessor) { return true; }
+	// if (has in order predecessor) { 
+	// return true; 
+	// }
+	// else {
+	// return false;
+	// }
 }
 
 // Check if there is an in order successor
 template <typename Key, typename E>
 bool BST<Key, E>::
 hasInorderSuccessor(BSTNode<Key, E>* root) {
-	// if (has in order successor) { return true; }
+	// if (has in order successor) { 
+	// return true; 
+	// }
+	// else {
+	// return false;
+	// }
 }
 
 #endif

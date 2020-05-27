@@ -20,12 +20,19 @@ int main(int argc, char** argv) {
 
 	cout << "Size of my BST is " << myBST.size() << endl;
 
-	const int testInt = 5;
-	string testString = "Five";
+	// Data
+	const int intArr[13] = { 77,70,75,66,79,68,67,69,90,85,83,87,65 };
+	string strArr[13] = { "seventy-seven","seventy","seventy-five","sixty-six",
+		"seventy-nine","sixty-eight","sixty-seven","sixty-nine","ninety",
+		"eighty-five","eighty-three","eighty-seven","sixty-five" };
 
-	myBST.insert(testInt, testString);
+	for (int i = 0; i < 13; i++) {
+		myBST.insert(intArr[i], strArr[i]);
+	}
 
 	cout << "Size of my BST is " << myBST.size() << endl;
+
+	myBST.print();
 
 	myBST.clear();
 
