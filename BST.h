@@ -34,6 +34,8 @@ private:
   E* findhelp(BSTNode<Key, E>*, const Key&) const;
   void printhelp(BSTNode<Key, E>*, int) const;
   void vist(BSTNode<Key, E>*) const;
+  bool hasInorderPredecessor(BSTNode<Key, E>*);
+  bool hasInorderSuccessor(BSTNode<Key, E>*);
 
 public:
 	BST() {  // Constructor
@@ -212,6 +214,20 @@ printhelp(BSTNode<Key, E>* root, int level) const {
     cout << "  ";
   cout << root->key() << "\n";        // Print node value
   printhelp(root->right(), level+1);  // Do right subtree
+}
+
+// Check if there is an in order predecessor
+template <typename Key, typename E>
+bool BST<Key, E>::
+hasInorderPredecessor(BSTNode<Key, E>* root) {
+	// if (has in order predecessor) { return true; }
+}
+
+// Check if there is an in order successor
+template <typename Key, typename E>
+bool BST<Key, E>::
+hasInorderSuccessor(BSTNode<Key, E>* root) {
+	// if (has in order successor) { return true; }
 }
 
 #endif
