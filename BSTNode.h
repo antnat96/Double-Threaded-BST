@@ -26,8 +26,10 @@ private:
 public:
   // Two constructors -- with and without initial values
   BSTNode() { lc = rc = NULL; }
-  BSTNode(Key K, E e, BSTNode* l =NULL, BSTNode* r =NULL)
-    { k = K; it = e; lc = l; rc = r; }
+  BSTNode(Key K, E e, bool leftContext = false, BSTNode* l =NULL, bool rightContext = false, BSTNode* r =NULL)
+  {
+	  k = K; it = e; isLcThreaded = leftContext; lc = l; isRcThreaded = rightContext; rc = r;
+  }
   ~BSTNode() {}             // Destructor
 
   // Functions to set and return the value and key
@@ -37,9 +39,13 @@ public:
   void setKey(const Key& K) { k = K; } // Sets the node's key
 
   // Functions to set and return the children & context variables
-  void lcIsThreaded(bool b) { isLcThreaded = b; } // Sets the boolean indicating the context of the left child node
+  void lcIsThreaded(bool b) { // Indicates context of left child - if true, the left child points to an inorder predecessor
+	  isLcThreaded = b; 
+  } 
   bool learnIfLcIsThreaded() { return isLcThreaded; } // Returns true if the left child pointer is threaded
-  void rcIsThreaded(bool b) { isRcThreaded = b; } // Sets the boolean indicating the context of the right child node
+  void rcIsThreaded(bool b) { // Indicates context of right child - if true, the right child points to an inorder successor
+	  isRcThreaded = b; 
+  } 
   bool learnIfRcIsThreaded() { return isRcThreaded; } // Returns true if the right child pointer is threaded
   inline BSTNode* left() const { return lc; } // Returns the left child (OR the inorder predecessor)
   void setLeft(BinNode<E>* b) { lc = (BSTNode*)b; } // Sets the left child (OR the inorder predecessor)
