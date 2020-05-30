@@ -130,12 +130,12 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
   if (root == NULL)  // Empty tree: create node
     return new BSTNode<Key, E>(k, it, NULL, NULL);
   if (k < root->key()) { // If the node is getting inserted as a left child
-	  // if (hasInorderPredecessor(root->left()) {
-	  //	root->lcIsThreaded(true);
-	  // }
-	  // if (hasInorderSuccessor(root->left()) {
-	  //	root->rcIsThreaded(true);
-	  // }
+	   if (hasInorderPredecessor(root->left())) {
+	  	root->lcIsThreaded(true);
+	   }
+	   if (hasInorderSuccessor(root->left())) {
+	  	root->rcIsThreaded(true);
+	   }
 	  root->setLeft(inserthelp(root->left(), k, it)); // Set as next possible left child
 	  // if we are setting it as the next possible left child, that means we'll have to
 	  // travel all the way down left and right children as far as we can
@@ -145,12 +145,12 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 	  // How to test to see if left outermost?
   }
   else { 
-	  // if (hasInorderPredecessor(root->left()) {
-	  //	root->lcIsThreaded(true);
-	  // }
-	  // if (hasInorderSuccessor(root->left()) {
-	  //	root->rcIsThreaded(true);
-	  // }
+	   if (hasInorderPredecessor(root->left())) {
+	  	root->lcIsThreaded(true);
+	   }
+	   if (hasInorderSuccessor(root->left())) {
+	  	root->rcIsThreaded(true);
+	   }
 	  root->setRight(inserthelp(root->right(), k, it)); // Set as next possible right child
 	  // if we are setting it as the next possible right child, that means we'll have to
 	  // travel all the way down left and right children as far as we can
@@ -242,7 +242,7 @@ bool BST<Key, E>::hasInorderPredecessor(BSTNode<Key, E>* root) {
 	//int smallestKey = getMin(root)->key();
 	//int currentKey = root->key();
 	//if (currentKey > smallestKey) {
-	//	return true;
+		return true;
 	//}
 	//return false;
 }
@@ -253,7 +253,7 @@ bool BST<Key, E>::hasInorderSuccessor(BSTNode<Key, E>* root) {
 	//int smallestKey = getMin(root)->key();
 	//int currentKey = root->key();
 	//if (currentKey < smallestKey) {
-	//	return true;
+		return true;
 	//}
 	//return false;
 }
