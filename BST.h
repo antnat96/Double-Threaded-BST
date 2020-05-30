@@ -117,8 +117,7 @@ void BST<Key, E>::vist(BSTNode<Key,E>* r) const {
 
 // Clean up BST by releasing space back free store
 template <typename Key, typename E>
-void BST<Key, E>::
-clearhelp(BSTNode<Key, E>* root) {
+void BST<Key, E>::clearhelp(BSTNode<Key, E>* root) {
   if (root == NULL) return;
   clearhelp(root->left());
   clearhelp(root->right());
@@ -166,15 +165,13 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 
 // Delete the minimum value from the BST, returning the revised BST
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::
-getmin(BSTNode<Key, E>* rt) {
+BSTNode<Key, E>* BST<Key, E>::getmin(BSTNode<Key, E>* rt) {
   if (rt->left() == NULL)
     return rt;
   else return getmin(rt->left());
 }
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::
-deletemin(BSTNode<Key, E>* rt) {
+BSTNode<Key, E>* BST<Key, E>::deletemin(BSTNode<Key, E>* rt) {
   if (rt->left() == NULL) // Found min
     return rt->right();
   else {                      // Continue left
@@ -186,8 +183,7 @@ deletemin(BSTNode<Key, E>* rt) {
 // Remove a node with key value k
 // Return: The tree with the node removed
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::
-removehelp(BSTNode<Key, E>* rt, const Key& k) {
+BSTNode<Key, E>* BST<Key, E>::removehelp(BSTNode<Key, E>* rt, const Key& k) {
   if (rt == NULL) return NULL;    // k is not in tree
   else if (k < rt->key())
     rt->setLeft(removehelp(rt->left(), k));
@@ -216,8 +212,7 @@ removehelp(BSTNode<Key, E>* rt, const Key& k) {
 
 // Find a node with the given key value
 template <typename Key, typename E>
-E* BST<Key, E>::findhelp(BSTNode<Key, E>* root,
-                              const Key& k) const {
+E* BST<Key, E>::findhelp(BSTNode<Key, E>* root, const Key& k) const {
   if (root == NULL) return NULL;          // Empty tree
   if (k < root->key())
     return findhelp(root->left(), k);   // Check left
@@ -232,8 +227,7 @@ E* BST<Key, E>::findhelp(BSTNode<Key, E>* root,
 
 // Print out a BST
 template <typename Key, typename E>
-void BST<Key, E>::
-printhelp(BSTNode<Key, E>* root, int level) const {
+void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
   if (root == NULL) return;           // Empty tree
   printhelp(root->left(), level+1);   // Do left subtree
   for (int i=0; i<level; i++)         // Indent to level
@@ -244,8 +238,7 @@ printhelp(BSTNode<Key, E>* root, int level) const {
 
 // Check if there is an in order predecessor
 template <typename Key, typename E>
-bool BST<Key, E>::
-hasInorderPredecessor(BSTNode<Key, E>* root) {
+bool BST<Key, E>::hasInorderPredecessor(BSTNode<Key, E>* root) {
 	//int smallestKey = getMin(root)->key();
 	//int currentKey = root->key();
 	//if (currentKey > smallestKey) {
@@ -256,8 +249,7 @@ hasInorderPredecessor(BSTNode<Key, E>* root) {
 
 // Check if there is an in order successor
 template <typename Key, typename E>
-bool BST<Key, E>::
-hasInorderSuccessor(BSTNode<Key, E>* root) {
+bool BST<Key, E>::hasInorderSuccessor(BSTNode<Key, E>* root) {
 	//int smallestKey = getMin(root)->key();
 	//int currentKey = root->key();
 	//if (currentKey < smallestKey) {
