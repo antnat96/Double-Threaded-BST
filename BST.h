@@ -33,6 +33,7 @@ private:
   E* findhelp(BSTNode<Key, E>*, const Key&) const;
   void printhelp(BSTNode<Key, E>*, int) const;
   void printInorder(BSTNode<Key, E>*, int) const;
+  void printReverse(BSTNode<Key, E>*, int) const;
   void vist(BSTNode<Key, E>*) const;
   bool hasInorderPredecessor(BSTNode<Key, E>*);
   bool hasInorderSuccessor(BSTNode<Key, E>*);
@@ -111,6 +112,8 @@ public:
 		printhelp(root, 0);
 		cout << "\nPrinting Inorder..." << endl;
 		printInorder(root, 0);
+		cout << "\nPrinting in reverse inorder..." << endl;
+		printReverse(root, 0);
 	}
 	}
 };
@@ -240,11 +243,22 @@ void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
 template <typename Key, typename E>
 void BST<Key, E>::printInorder(BSTNode<Key, E>* root, int level) const {
 	if (root == NULL) return;           // Empty tree
-	printhelp(root->left(), level + 1);   // Do left subtree
+	printInorder(root->left(), level + 1);   // Do left subtree
 	for (int i = 0; i < level; i++)         // Indent to level
 		cout << "  ";
-	cout << root->element() << "\n";        // Print node value
-	printhelp(root->right(), level + 1);  // Do right subtree
+	cout << root->key() << "\n";        // Print node value
+	printInorder(root->right(), level + 1);  // Do right subtree
+}
+
+// Print Reverse
+template <typename Key, typename E>
+void BST<Key, E>::printReverse(BSTNode<Key, E>* root, int level) const {
+	if (root == NULL) return;           // Empty tree
+	printReverse(root->right(), level + 1);  // Do right subtree
+	for (int i = 0; i < level; i++)         // Indent to level
+		cout << "  ";
+	cout << root->key() << "\n";        // Print node value
+	printReverse(root->left(), level + 1);   // Do left subtree
 }
 
 // Check if there is an in order predecessor
