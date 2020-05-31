@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
 
 	cout << "Size of my BST is " << myBST.size() << endl;
 
+	cout << "Inserting my key value pairs..." << endl;
+
 	// Data
 	const int intArr[13] = { 77,70,75,66,79,68,67,69,90,85,83,87,65 };
 	string strArr[13] = { "seventy-seven","seventy","seventy-five","sixty-six",
@@ -30,18 +32,21 @@ int main(int argc, char** argv) {
 		myBST.insert(intArr[i], strArr[i]);
 	}
 
-	cout << "Size of my BST is " << myBST.size() << endl;
+	cout << "Inserted!" << endl;
+
+	cout << "Size of my BST is " << myBST.size() << "\n" << endl;
+
+	cout << "Regular print:" << endl;
 
 	myBST.print();
 
-	cout << "<-----PRINTED------>" << endl;
-
-	cout << myBST.find(66) << endl;
+	cout << "\n" << "Clearing my BST..." << endl;
 
 	myBST.clear();
 
-	cout << "Size of my BST is " << myBST.size() << endl;
+	cout << "Cleared!" << endl;
 
+	cout << "Size of my BST is " << myBST.size() << endl;
 
 	return 0;
 }
