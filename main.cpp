@@ -34,6 +34,10 @@ int main(int argc, char** argv) {
 
 	myBST.print();
 
+	cout << "<-----PRINTED------>" << endl;
+
+	cout << myBST.find(66) << endl;
+
 	myBST.clear();
 
 	cout << "Size of my BST is " << myBST.size() << endl;
