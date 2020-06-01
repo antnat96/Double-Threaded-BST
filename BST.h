@@ -35,8 +35,10 @@ private:
   void printInorder(BSTNode<Key, E>*, int) const;
   void printReverse(BSTNode<Key, E>*, int) const;
   void vist(BSTNode<Key, E>*) const;
-  bool hasInorderPredecessor(BSTNode<Key, E>*);
-  bool hasInorderSuccessor(BSTNode<Key, E>*);
+  bool hasInorderPredecessor(BSTNode <Key, E>*);
+  int getInorderPredecessor(BSTNode<Key, E>*);
+  bool hasInorderSuccessor(BSTNode <Key, E>*);
+  int getInorderSuccessor(BSTNode<Key, E>*);
 
 public:
 	BST() {  // Constructor
@@ -61,7 +63,7 @@ public:
 	// e The record to insert.
 	void insert(const Key& k, const E& e) {
 		cout << "-------Adding " << k << "--------" << endl;
-		root = inserthelp(root, k, e);
+		root = inserthelp(root, k, e);		
 		cout << "-------Added " << k << "--------\n" << endl;
 		nodecount++;
 	}
@@ -136,32 +138,14 @@ void BST<Key, E>::clearhelp(BSTNode<Key, E>* root) {
 // Insert a node into the BST, returning the updated tree
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
-	cout << "Running inserthelp()" << endl;
 	if (root == NULL) {// Empty tree: create node
-		cout << "Empty tree, creating node." << endl;
-		return new BSTNode<Key, E>(k, it, NULL, NULL);
+		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
 	}
-	if (k < root->key()) { // If the node is getting inserted as a left child
-		if (root->left() != nullptr) {
-			if (hasInorderPredecessor(root->left())) {
-				root->lcIsThreaded(true);
-			}
-			if (hasInorderSuccessor(root->left())) {
-				root->rcIsThreaded(true);
-			}
-		}
-		root->setLeft(inserthelp(root->left(), k, it)); 
+	if (k < root->key()) { // If the new node key is less than the root key
+		root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree
 	}
 	else { 
-		if (root->left() != nullptr) {
-			if (hasInorderPredecessor(root->left())) {
-				root->lcIsThreaded(true);
-			}
-			if (hasInorderSuccessor(root->left())) {
-				root->rcIsThreaded(true);
-			}
-		}
-		root->setRight(inserthelp(root->right(), k, it)); 
+		root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
 	}
 	return root;       // Return tree with node inserted
 }
@@ -263,24 +247,47 @@ void BST<Key, E>::printReverse(BSTNode<Key, E>* root, int level) const {
 
 // Check if there is an in order predecessor
 template <typename Key, typename E>
+int BST<Key, E>::getInorderPredecessor(BSTNode<Key, E>* root) {
+	//if (root->left() != NULL) { // If left subtree, find rightmost node
+	//	BSTNode<Key, E>* temp = root->left();
+	//	while (temp->right() != NULL) {
+	//		temp = temp->right();
+	//	}
+	//	return temp->key();
+	//}
+	//else { // If no left subtree
+	//	//BSTNode<Key, E>* tempNode1 = root;
+	//	BSTNode<Key, E>* tempNode2;
+	//	while (root->key() != tempNode1->key()) {
+	//		if (root->key() > tempNode1->key()) {
+	//			tempNode2 = tempNode1;
+	//			tempNode1 = tempNode1->right();
+	//		}
+	//		else {
+	//			tempNode1 = tempNode1->left();
+	//		}
+	//	}
+	//	return tempNode2->key();
+	//}
+	return 0;
+}
+
+// Check if there is an in order successor
+template <typename Key, typename E>
+int BST<Key, E>::getInorderSuccessor(BSTNode<Key, E>* root) {
+	return 0;
+}
+
+// Check if there is an in order predecessor
+template <typename Key, typename E>
 bool BST<Key, E>::hasInorderPredecessor(BSTNode<Key, E>* root) {
-	if (root->key() > getmin(root)->key()) {
-		cout << root->key() << " has an inorder predecessor " << endl;
-		return true;
-	}
-	cout << "No inorder predecessor to " << root->key() << endl;
-	return false;
+	return true;
 }
 
 // Check if there is an in order successor
 template <typename Key, typename E>
 bool BST<Key, E>::hasInorderSuccessor(BSTNode<Key, E>* root) {
-	if (root->key() < getmin(root)->key()) {
-		cout << root->key() << " has an inorder predecessor " << endl;
-		return true;
-	}
-	cout << "No inorder successor to " << root->key() << endl;
-	return false;
+	return true;
 }
 
 #endif
