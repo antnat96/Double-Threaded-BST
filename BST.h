@@ -63,7 +63,7 @@ public:
 		cout << "-------Adding " << k << "--------" << endl;
 		root = inserthelp(root, k, e);
 		nodecount++;
-		assignThreads(root, k, NULL, NULL);
+		//if (nodecount > 1) { assignThreads(root, k, NULL, NULL); }
 		cout << "-------Added " << k << "--------\n" << endl;
 	}
 
@@ -128,26 +128,6 @@ void BST<Key, E>::clearhelp(BSTNode<Key, E>* root) {
   clearhelp(root->left());
   clearhelp(root->right());
   delete root;
-}
-
-// Insert a node into the BST, returning the updated tree
-template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
-	if (root == NULL) {
-		if (nodecount == 0) { // First node in tree
-			return new BSTNode<Key, E>(k, it, false, NULL, false, NULL); // No threads or children
-		}
-
-		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
-
-	}
-	if (k < root->key()) { // If the new node key is less than the root key, left turn
-		root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree to find an empty left child
-	}
-	else { // If the new node key is greater than the root key, right turn
-		root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
-	}
-	return root;       // Return tree with node inserted
 }
 
 // Delete the minimum value from the BST, returning the revised BST
@@ -249,66 +229,90 @@ void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
 // Citation: https://www.geeksforgeeks.org/inorder-predecessor-successor-given-key-bst/
 template <typename Key, typename E>
 void BST<Key, E>::assignThreads(BSTNode <Key, E>* root, const Key& newNodeKey, BSTNode<Key, E>* predecessor = NULL, BSTNode<Key, E>* successor = NULL) {
-	if (nodecount == 1) { // There's zero or one nodes, no threads need to be assigned
-		return;
-	}
-	if (nodecount == 2) {
+	// If there's a root node and one child, one thread should be assigned.
+	if (nodecount == 2) { 
+
+		// New node is a left child
 		if (newNodeKey < root->key()) {
 			successor = root;
-			cout << "Successor to " << newNodeKey << " is " << successor->key() << endl;
+			root->setRight(successor);
+			root->rcIsThreaded(true);
+			cout << "Successor to " << newNodeKey << ": " << root->right()->key() << ", Threaded: " << root->rcThreadStatus() << endl;
 		}
+
+		// New node is a right child
 		else if (newNodeKey > root->key()) {
 			predecessor = root;
-			cout << "Predecessor to " << newNodeKey << " is " << predecessor->key() << endl;
+			root->setLeft(successor);
+			root->lcIsThreaded(true);
+			cout << "Predecessor to " << newNodeKey << ": " << root->right()->key() << ", Threaded: " << root->rcThreadStatus() << endl;
 		}
 		return;
-	}
-	if (root->key() == newNodeKey) { // If the root node key is the new node key
-		
-		BSTNode<Key, E>* left = root->left();
-		BSTNode<Key, E>* right = root->right();
-
-		if (left != NULL) {
-			BSTNode<Key, E>* temp = left;
-			while (temp->right() != NULL) {
-				temp = temp->right();
-			}
-			predecessor = temp;
-		}
-
-		if (right != NULL) {
-			BSTNode<Key, E>* temp2 = right;
-			while (temp2->left() != NULL) {
-				temp2 = temp2->left();
-			}
-			successor = temp2;
-		}
-		cout << "Given the current state of the tree:" << endl;
-		if (predecessor != NULL) {
-			cout << "Predecessor to " << newNodeKey << " is " << predecessor->key() << endl;
-			// Assign left child pointer to point to predecessor
-			// root->setLeft(predecessor);
-		}
-		else {
-			cout << "No predecessor to " << newNodeKey << endl;
-		}
-		if (successor != NULL) {
-			cout << "Successor to " << newNodeKey << " is " << successor->key() << endl;
-			// Assign right child pointer to point to successor
-			// root->setRight(successor);
-		}
-		else {
-			cout << "No successor to " << newNodeKey << endl;
-		}
-		return;
-	}
-	if (root->key() > newNodeKey) {
-		successor = root;
-		assignThreads(root->left(), newNodeKey, predecessor, successor);
 	}
 	else {
-		predecessor = root;
-		assignThreads(root->right(), newNodeKey, predecessor, successor);
+			if (root->key() == newNodeKey) { // If the root node key is the new node key
+				cout << "CHECK" << endl;
+			
+			BSTNode<Key, E>* left = root->left();
+			BSTNode<Key, E>* right = root->right();
+
+			if (left != NULL) {
+				BSTNode<Key, E>* temp = left;
+				while (temp->right() != NULL) {
+					temp = temp->right();
+				}
+				predecessor = temp;
+			}
+
+			if (right != NULL) {
+				BSTNode<Key, E>* temp2 = right;
+				while (temp2->left() != NULL) {
+					temp2 = temp2->left();
+				}
+				successor = temp2;
+			}
+			cout << "Given the current state of the tree:" << endl;
+			if (predecessor != NULL) {
+				cout << "Predecessor to " << newNodeKey << " is " << predecessor->key() << endl;
+				// Assign left child pointer to point to predecessor
+				// root->setLeft(predecessor);
+			}
+			else {
+				cout << "No predecessor to " << newNodeKey << endl;
+			}
+			if (successor != NULL) {
+				cout << "Successor to " << newNodeKey << " is " << successor->key() << endl;
+				// Assign right child pointer to point to successor
+				// root->setRight(successor);
+			}
+			else {
+				cout << "No successor to " << newNodeKey << endl;
+			}
+			return;
+		}
+		if (root->key() > newNodeKey) {
+			successor = root;
+			assignThreads(root->left(), newNodeKey, predecessor, successor);
+		}
+		else {
+			predecessor = root;
+			assignThreads(root->right(), newNodeKey, predecessor, successor);
+		}
 	}
+}
+
+// Insert a node into the BST, returning the updated tree
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
+	if (root == NULL) {
+		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
+	}
+	if (k < root->key()) { // If the new node key is less than the root key, left turn
+		root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree to find an empty left child
+	}
+	else { // If the new node key is greater than the root key, right turn
+		root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
+	}
+	return root;       // Return tree with node inserted
 }
 #endif

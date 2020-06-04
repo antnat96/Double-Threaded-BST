@@ -36,17 +36,17 @@ int main(int argc, char** argv) {
 
 	cout << "Size of my BST is " << myBST.size() << "\n" << endl;
 
-	cout << "Regular print:" << endl;
+	//cout << "Regular print:" << endl;
 
 	myBST.print();
 
-	cout << "\n" << "Clearing my BST..." << endl;
+	//cout << "\n" << "Clearing my BST..." << endl;
 
-	myBST.clear();
+	//myBST.clear();
 
-	cout << "Cleared!" << endl;
+	//cout << "Cleared!" << endl;
 
-	cout << "Size of my BST is " << myBST.size() << endl;
+	//cout << "Size of my BST is " << myBST.size() << endl;
 
 	return 0;
 }
