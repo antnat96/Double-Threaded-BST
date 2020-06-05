@@ -22,7 +22,6 @@ template <typename Key, typename E>
 class BST : public Dictionary<Key,E> {
 private:
   BSTNode<Key,E>* root;   // Root of the BST
-  BSTNode<Key, E>* fullTree; // Full binary search tree
   int nodecount;         // Number of nodes in the BST
 
   // Private "helper" functions
@@ -33,10 +32,12 @@ private:
   BSTNode<Key,E>* removehelp(BSTNode<Key, E>*, const Key&);
   E* findhelp(BSTNode<Key, E>*, const Key&) const;
   void printhelp(BSTNode<Key, E>*, int) const;
+  void vist(BSTNode<Key, E>*) const;
+  void findPredecessorAndSuccessor(BSTNode<Key, E>*, const Key&, BSTNode<Key, E>*, BSTNode<Key, E>*);
+  void setThreadedPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
+  void setThreadedSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
   //void printInorder(BSTNode<Key, E>*, int) const;
   //void printReverse(BSTNode<Key, E>*, int) const;
-  void vist(BSTNode<Key, E>*) const;
-  void assignThreads(BSTNode<Key, E>*, const Key&, BSTNode<Key, E>*, BSTNode<Key, E>*);
 
 public:
 	BST() {  // Constructor
@@ -49,8 +50,7 @@ public:
 	//doubly-threaded trees and that is not part of the assignment.
 	//~BST() { clearhelp(root); }            // Destructor
 
-	void clear() // Reinitialize tree
-	{
+	void clear() { // Reinitialize tree
 		clearhelp(root); 
 		root = NULL; 
 		nodecount = 0;
@@ -61,9 +61,16 @@ public:
 	// e The record to insert.
 	void insert(const Key& k, const E& e) {
 		cout << "-------Adding " << k << "--------" << endl;
+
+		// Insert the new node in the appropriate spot
 		root = inserthelp(root, k, e);
+
+		// Increment the number of nodes
 		nodecount++;
-		//if (nodecount > 1) { assignThreads(root, k, NULL, NULL); }
+
+		// Assign threads to the new node
+		if (nodecount > 1) { findPredecessorAndSuccessor(root, k, NULL, NULL); }
+
 		cout << "-------Added " << k << "--------\n" << endl;
 	}
 
@@ -130,13 +137,15 @@ void BST<Key, E>::clearhelp(BSTNode<Key, E>* root) {
   delete root;
 }
 
-// Delete the minimum value from the BST, returning the revised BST
+// Get the minimum value
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::getmin(BSTNode<Key, E>* rt) {
   if (rt->left() == NULL)
     return rt;
   else return getmin(rt->left());
 }
+
+// Delete the minimum value from the BST, returning the revised BST
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::deletemin(BSTNode<Key, E>* rt) {
   if (rt->left() == NULL) // Found min
@@ -203,6 +212,84 @@ void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
   printhelp(root->right(), level+1);  // Do right subtree
 }
 
+// Check if there is an in order predecessor and successor, assign threads accordingly
+// Citation: https://www.geeksforgeeks.org/inorder-predecessor-successor-given-key-bst/
+template <typename Key, typename E>
+void BST<Key, E>::findPredecessorAndSuccessor(BSTNode <Key, E>* root, const Key& newNodeKey, BSTNode<Key, E>* predecessor = NULL, BSTNode<Key, E>* successor = NULL) {
+	if (root == NULL) return;
+	if (root->key() == newNodeKey) { // If the root node key is the new node key			
+		BSTNode<Key, E>* left = root->left();
+		BSTNode<Key, E>* right = root->right();	
+		if (left != NULL) {
+			BSTNode<Key, E>* temp = left;
+			while (temp->right() != NULL) {
+				temp = temp->right();
+			}
+			predecessor = temp;
+		}
+		if (right != NULL) {
+			BSTNode<Key, E>* temp2 = right;
+			while (temp2->left() != NULL) {
+				temp2 = temp2->left();
+			}
+			successor = temp2;
+		}
+		if (predecessor != NULL) {
+			setThreadedPredecessor(root, predecessor);
+		}
+		if (successor != NULL) {
+			setThreadedSuccessor(root, successor);
+		}
+		return;
+	}
+	if (newNodeKey < root->key()) {
+		successor = root;
+		findPredecessorAndSuccessor(root->left(), newNodeKey, predecessor, successor);
+	}
+	else {
+		predecessor = root;
+		findPredecessorAndSuccessor(root->right(), newNodeKey, predecessor, successor);
+	}
+}
+
+// Insert a node into the BST, returning the updated tree
+// Only insert a node if
+// The left and right children are null
+// OR
+// if inserting a left child
+// The current left child is threaded or null
+// if inserting a right child
+// The current right child is threaded or null
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
+	if (root == NULL) {
+		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
+	}
+	if (k < root->key()) { // If the new node key is less than the root key, left turn
+		root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree to find an empty left child
+	}
+	else { // If the new node key is greater than the root key, right turn
+		root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
+	}
+	return root;       // Return tree with node inserted
+}
+
+// Assign the predecessor and set the context variable
+template <typename Key, typename E>
+void BST<Key, E>::setThreadedPredecessor(BSTNode <Key, E>* root, BSTNode<Key, E>* predecessor) {
+	cout << "Predecessor to " << root->key() << " is " << predecessor->key() << endl;
+	//root->setLeft(predecessor);
+	root->lcIsThreaded(true);
+}
+
+// Assign the successor and set the context variable
+template <typename Key, typename E>
+void BST<Key, E>::setThreadedSuccessor(BSTNode <Key, E>* root, BSTNode<Key, E>* successor) {
+	cout << "Successor to " << root->key() << " is " << successor->key() << endl;
+	root->setRight(successor);
+	root->rcIsThreaded(true);
+}
+
 //// Print inorder
 //template <typename Key, typename E>
 //void BST<Key, E>::printInorder(BSTNode<Key, E>* root, int level) const {
@@ -224,95 +311,4 @@ void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
 //	cout << root->key() << "\n";        // Print node value
 //	printReverse(root->left(), level + 1);   // Do left subtree
 //}
-
-// Check if there is an in order predecessor and successor, assign threads accordingly
-// Citation: https://www.geeksforgeeks.org/inorder-predecessor-successor-given-key-bst/
-template <typename Key, typename E>
-void BST<Key, E>::assignThreads(BSTNode <Key, E>* root, const Key& newNodeKey, BSTNode<Key, E>* predecessor = NULL, BSTNode<Key, E>* successor = NULL) {
-	// If there's a root node and one child, one thread should be assigned.
-	if (nodecount == 2) { 
-
-		// New node is a left child
-		if (newNodeKey < root->key()) {
-			successor = root;
-			root->setRight(successor);
-			root->rcIsThreaded(true);
-			cout << "Successor to " << newNodeKey << ": " << root->right()->key() << ", Threaded: " << root->rcThreadStatus() << endl;
-		}
-
-		// New node is a right child
-		else if (newNodeKey > root->key()) {
-			predecessor = root;
-			root->setLeft(successor);
-			root->lcIsThreaded(true);
-			cout << "Predecessor to " << newNodeKey << ": " << root->right()->key() << ", Threaded: " << root->rcThreadStatus() << endl;
-		}
-		return;
-	}
-	else {
-			if (root->key() == newNodeKey) { // If the root node key is the new node key
-				cout << "CHECK" << endl;
-			
-			BSTNode<Key, E>* left = root->left();
-			BSTNode<Key, E>* right = root->right();
-
-			if (left != NULL) {
-				BSTNode<Key, E>* temp = left;
-				while (temp->right() != NULL) {
-					temp = temp->right();
-				}
-				predecessor = temp;
-			}
-
-			if (right != NULL) {
-				BSTNode<Key, E>* temp2 = right;
-				while (temp2->left() != NULL) {
-					temp2 = temp2->left();
-				}
-				successor = temp2;
-			}
-			cout << "Given the current state of the tree:" << endl;
-			if (predecessor != NULL) {
-				cout << "Predecessor to " << newNodeKey << " is " << predecessor->key() << endl;
-				// Assign left child pointer to point to predecessor
-				// root->setLeft(predecessor);
-			}
-			else {
-				cout << "No predecessor to " << newNodeKey << endl;
-			}
-			if (successor != NULL) {
-				cout << "Successor to " << newNodeKey << " is " << successor->key() << endl;
-				// Assign right child pointer to point to successor
-				// root->setRight(successor);
-			}
-			else {
-				cout << "No successor to " << newNodeKey << endl;
-			}
-			return;
-		}
-		if (root->key() > newNodeKey) {
-			successor = root;
-			assignThreads(root->left(), newNodeKey, predecessor, successor);
-		}
-		else {
-			predecessor = root;
-			assignThreads(root->right(), newNodeKey, predecessor, successor);
-		}
-	}
-}
-
-// Insert a node into the BST, returning the updated tree
-template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, const E& it) {
-	if (root == NULL) {
-		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
-	}
-	if (k < root->key()) { // If the new node key is less than the root key, left turn
-		root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree to find an empty left child
-	}
-	else { // If the new node key is greater than the root key, right turn
-		root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
-	}
-	return root;       // Return tree with node inserted
-}
 #endif
