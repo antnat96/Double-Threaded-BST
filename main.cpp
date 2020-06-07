@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
 	cout << "Size of my BST is " << myBST.size() << "\n" << endl;
 
-	cout << "Regular print:" << endl;
+	cout << "My tree's structure is: (tests changes to print function)" << endl;
 
 	myBST.print();
 

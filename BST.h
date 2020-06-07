@@ -41,8 +41,8 @@ private:
   BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, BSTNode<Key, E>*);
   BSTNode<Key, E>* getNode(BSTNode<Key, E>*, const Key&);
   BSTNode<Key, E>* getParent(BSTNode<Key, E>*, const Key&);
-  //void printInorder(BSTNode<Key, E>*, int) const;
-  //void printReverse(BSTNode<Key, E>*, int) const;
+  void printInorderHelp(BSTNode<Key, E>*, int) const;
+  void printReverseHelp(BSTNode<Key, E>*, int) const;
 
 public:
 	BST() {  // Constructor
@@ -142,6 +142,24 @@ public:
 			printhelp(root, 0);
 		}
 	}
+
+	// Print the contents of the BST
+	void printInorder() const {
+		if (root == NULL) cout << "The BST is empty.\n";
+		else {
+			cout << "Printing inorder..." << endl;
+			printInorderHelp(root, 0);
+		}
+	}
+
+	// Print the contents of the BST
+	void printReverse() const {
+		if (root == NULL) cout << "The BST is empty.\n";
+		else {
+			cout << "Printing inorder/reverse..." << endl;
+			printReverseHelp(root, 0);
+		}
+	}
 };
 
 // Visit -- prints out root
@@ -227,11 +245,15 @@ E* BST<Key, E>::findhelp(BSTNode<Key, E>* root, const Key& k) const {
 template <typename Key, typename E>
 void BST<Key, E>::printhelp(BSTNode<Key, E>* root, int level) const {
   if (root == NULL) return;           // Empty tree
-  printhelp(root->left(), level+1);   // Do left subtree
+  if (root->lcThreadStatus() != true) { // Don't follow a thread
+	  printhelp(root->left(), level + 1);   // Do left subtree
+  }
   for (int i=0; i<level; i++)         // Indent to level
     cout << "  ";
   cout << root->key() << "\n";        // Print node value
-  printhelp(root->right(), level+1);  // Do right subtree
+  if (root->rcThreadStatus() != true) { // Don't follow a thread
+	  printhelp(root->right(), level + 1);  // Do right subtree
+  }
 }
 
 // Insert a node into the BST, returning the updated tree
@@ -263,27 +285,27 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 	return root; // Return tree with node inserted
 }
 
-//// Print inorder
-//template <typename Key, typename E>
-//void BST<Key, E>::printInorder(BSTNode<Key, E>* root, int level) const {
-//	if (root == NULL) return;           // Empty tree
-//	printInorder(root->left(), level + 1);   // Do left subtree
-//	for (int i = 0; i < level; i++)         // Indent to level
-//		cout << "  ";
-//	cout << root->key() << "\n";        // Print node value
-//	printInorder(root->right(), level + 1);  // Do right subtree
-//}
-//
-//// Print Reverse
-//template <typename Key, typename E>
-//void BST<Key, E>::printReverse(BSTNode<Key, E>* root, int level) const {
-//	if (root == NULL) return;           // Empty tree
-//	printReverse(root->right(), level + 1);  // Do right subtree
-//	for (int i = 0; i < level; i++)         // Indent to level
-//		cout << "  ";
-//	cout << root->key() << "\n";        // Print node value
-//	printReverse(root->left(), level + 1);   // Do left subtree
-//}
+// Print inorder
+template <typename Key, typename E>
+void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root, int level) const {
+	if (root == NULL) return;           // Empty tree
+	printInorder(root->left(), level + 1);   // Do left subtree
+	for (int i = 0; i < level; i++)         // Indent to level
+		cout << "  ";
+	cout << root->key() << "\n";        // Print node value
+	printInorder(root->right(), level + 1);  // Do right subtree
+}
+
+// Print Reverse
+template <typename Key, typename E>
+void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root, int level) const {
+	if (root == NULL) return;           // Empty tree
+	printReverse(root->right(), level + 1);  // Do right subtree
+	for (int i = 0; i < level; i++)         // Indent to level
+		cout << "  ";
+	cout << root->key() << "\n";        // Print node value
+	printReverse(root->left(), level + 1);   // Do left subtree
+}
 
 // Assign the successor and set the context variable
 template <typename Key, typename E>
