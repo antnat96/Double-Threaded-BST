@@ -41,8 +41,11 @@ private:
   BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, BSTNode<Key, E>*);
   BSTNode<Key, E>* getNode(BSTNode<Key, E>*, const Key&);
   BSTNode<Key, E>* getParent(BSTNode<Key, E>*, const Key&);
+  BSTNode<Key, E>* getLowestParent(BSTNode<Key, E>*, const Key&);
+  BSTNode<Key, E>* getHighestParent(BSTNode<Key, E>*, const Key&);
   void printInorderHelp(BSTNode<Key, E>*) const;
   void printReverseHelp(BSTNode<Key, E>*) const;
+  BSTNode<Key, E>* leftMostChildInRightSubtree(BSTNode<Key, E>*) const;
 
 public:
 	BST() {  // Constructor
@@ -65,8 +68,6 @@ public:
 	// k Key value of the record.
 	// e The record to insert.
 	void insert(const Key& k, const E& e) {
-		cout << "-------Adding " << k << "--------" << endl;
-
 		// Insert the new node in the appropriate spot
 		root = inserthelp(root, k, e);
 
@@ -92,8 +93,6 @@ public:
 		else if (nodecount > 1) {
 			standardThread(root, k);
 		}
-
-		cout << "-------Added " << k << "--------\n" << endl;
 	}
 
 	// Remove a record from the tree.
@@ -147,9 +146,8 @@ public:
 	void printInorder() const {
 		if (root == NULL) cout << "The BST is empty.\n";
 		else {
-			cout << "Printing inorder..." << endl;
 			printInorderHelp(root);
-			cout << "printed" << endl;
+			cout << "\n" << endl;
 		}
 	}
 
@@ -158,7 +156,7 @@ public:
 		if (root == NULL) cout << "The BST is empty.\n";
 		else {
 			cout << "Printing inorder/reverse..." << endl;
-			printReverseHelp(root, 0);
+			printReverseHelp(root);
 		}
 	}
 };
@@ -291,8 +289,6 @@ template <typename Key, typename E>
 void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root) const {
 	if (root == NULL) return;           // Empty tree
 
-	BSTNode<Key, E>* rootCopy = root;
-
 	// Find where to begin by looking for the node with the lowest key
 	BSTNode<Key, E>* startingPlace = NULL;
 	while (startingPlace == NULL) {
@@ -305,23 +301,25 @@ void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root) const {
 	}
 	BSTNode<Key, E>* curr = startingPlace;
 
-	// Find where to stop by looking for the node with the highest key
-	BSTNode<Key, E>* endingPlace = NULL;
-	while (endingPlace == NULL) {
-		if (rootCopy->rcThreadStatus() != true) {
-			rootCopy = rootCopy->right();
+	while (curr != NULL) { // While current node is a node
+		cout << curr->element() << endl; // Print its info
+		if (curr->rcThreadStatus() == true && curr->right() != NULL) {
+			curr = curr->right();
 		}
 		else {
-			endingPlace = rootCopy;
+			curr = leftMostChildInRightSubtree(curr->right());
 		}
 	}
-	BSTNode<Key, E>* curr2 = endingPlace;
-
-	//while (curr != NULL) {
-	//	
-	//}
-	
 	return;
+}
+
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::leftMostChildInRightSubtree(BSTNode<Key, E>* root) const {
+	if (root == NULL) return NULL;
+	while (root->left() != NULL && root->lcThreadStatus() == false) {
+		root = root->left();
+	}
+	return root;
 }
 
 // Print Reverse
@@ -332,8 +330,8 @@ void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root) const {
 	// Find where to begin by looking for the node with the lowest key
 	BSTNode<Key, E>* startingPlace = NULL;
 	while (startingPlace == NULL) {
-		if (root->lcThreadStatus() != true) {
-			root = root->left();
+		if (root->rcThreadStatus() != true) {
+			root = root->right();
 		}
 		else {
 			startingPlace = root;
@@ -341,19 +339,16 @@ void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root) const {
 	}
 	BSTNode<Key, E>* curr = startingPlace;
 
-	// Print the starting element
-	cout << curr->element() << endl;
-	// Once it is found, follow the right threads up
-	while (curr->right() != curr) { // Stops when a node points to itself (the highest node)
-		// Print the right child element
-		cout << curr->right()->element() << endl;
-		// Set current to the right child element
-		curr = curr->right();
+	while (curr != NULL) { // While current node is a node
+		cout << curr->element() << endl; // Print its info
+		if (curr->rcThreadStatus() == true && curr->right() != NULL) {
+			curr = curr->right();
+		}
+		else {
+			curr = leftMostChildInRightSubtree(curr->right());
+		}
 	}
-
 	return;
-
-
 }
 
 // Assign the successor and set the context variable
@@ -371,12 +366,21 @@ template <typename Key, typename E>
 void BST<Key, E>::standardThread(BSTNode <Key, E>* root, const Key& k) {
 	// Get pointers to the new node and its parent
 	BSTNode<Key, E>* temp = getNode(root, k);
-	BSTNode<Key, E>* par = getParent(root, k);
+	BSTNode<Key, E>* par;
+	if (lowestKey != k && highestKey != k) {
+		par = getParent(root, k);
+	}
+	else if (lowestKey == k) {
+		par = getLowestParent(root, k);
+	}
+	else if (highestKey == k) {
+		par = getHighestParent(root, k);
+	}
 
 	// If the node is the left-most node (the first node printed when printing in order)
 	if (lowestKey == k) {
 		temp->lcIsThreaded(true); 
-		temp->setLeft(temp); // Thread left most node's left child to itself
+		temp->setLeft(NULL); // Thread left most node's left child to itself
 		temp->rcIsThreaded(true); 
 		temp->setRight(findSuccessor(root, temp, NULL)); // Thread left most node's right child to its inorder successor
 	}
@@ -385,7 +389,7 @@ void BST<Key, E>::standardThread(BSTNode <Key, E>* root, const Key& k) {
 		temp->lcIsThreaded(true);
 		temp->setLeft(findPredecessor(root, temp, NULL)); // Thread right most node's left child to its inorder successor
 		temp->rcIsThreaded(true);
-		temp->setRight(temp); // Thread right most node's right child to itself
+		temp->setRight(NULL); // Thread right most node's right child to itself
 	}
 	// If the node is not the left or right most node
 	if (lowestKey != k && highestKey != k) {
@@ -430,8 +434,15 @@ BSTNode<Key, E>* BST<Key, E>::getNode(BSTNode<Key, E>* root, const Key& k) {
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::getParent(BSTNode<Key, E>* root, const Key& k) {
 	if (root == NULL) return NULL;
-	if (root->left()->key() == k || root->right()->key() == k) {
-		return root;
+	if (root->left() != NULL) {
+		if (root->left()->key() == k) {
+			return root;
+		}
+	}
+	if (root->right() != NULL) {
+		if (root->right()->key() == k) {
+			return root;
+		}
 	}
 	if (root->key() > k) {
 		root = root->left();
@@ -440,6 +451,30 @@ BSTNode<Key, E>* BST<Key, E>::getParent(BSTNode<Key, E>* root, const Key& k) {
 	else if (root->key() < k) {
 		root = root->right();
 		getParent(root, k);
+	}
+}
+
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::getLowestParent(BSTNode<Key, E>* root, const Key& k) {
+	if (root == NULL) return NULL;
+	if (root->left() != NULL) {
+		if (root->left()->key() == k) {
+			return root;
+		}
+		root = root->left();
+		getLowestParent(root, k);
+	}
+}
+
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::getHighestParent(BSTNode<Key, E>* root, const Key& k) {
+	if (root == NULL) return NULL;
+	if (root->right() != NULL) {
+		if (root->right()->key() == k) {
+			return root;
+		}
+		root = root->right();
+		getHighestParent(root, k);
 	}
 }
 

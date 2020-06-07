@@ -44,6 +44,10 @@ int main(int argc, char** argv) {
 
 	myBST.printInorder();
 
+	cout << "\nReverse printing of my tree: (tests left threads and printReverseHelp function)" << endl;
+
+	myBST.printReverse();
+
 	//cout << "\n" << "Clearing my BST..." << endl;
 
 	//myBST.clear();
