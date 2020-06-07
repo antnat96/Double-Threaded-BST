@@ -23,6 +23,8 @@ class BST : public Dictionary<Key,E> {
 private:
   BSTNode<Key,E>* root;   // Root of the BST
   int nodecount;         // Number of nodes in the BST
+  int lowestKey;
+  int highestKey;
 
   // Private "helper" functions
   void clearhelp(BSTNode<Key, E>*);
@@ -35,11 +37,10 @@ private:
   void vist(BSTNode<Key, E>*) const;
   void simpleThread(BSTNode<Key, E>*);
   void standardThread(BSTNode<Key, E>*, const Key&);
-  BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
-  BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
-  const Key& getLeftMostNode(BSTNode <Key, E>* root);
-  const Key& getRightMostNode(BSTNode <Key, E>* root);
-  BSTNode<Key, E>* getNode(BSTNode<Key, E>* root, const Key&);
+  BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*, BSTNode<Key, E>*);
+  BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, BSTNode<Key, E>*);
+  BSTNode<Key, E>* getNode(BSTNode<Key, E>*, const Key&);
+  BSTNode<Key, E>* getParent(BSTNode<Key, E>*, const Key&);
   //void printInorder(BSTNode<Key, E>*, int) const;
   //void printReverse(BSTNode<Key, E>*, int) const;
 
@@ -72,12 +73,23 @@ public:
 		// Increment the number of nodes
 		nodecount++;
 
+		// Set the global lowest key variable
+		if (nodecount == 1) lowestKey = k;
+		if (lowestKey > k) {
+			lowestKey = k;
+		}
+
+		// Set the global highest key variable
+		if (nodecount == 1) highestKey = k;
+		if (highestKey < k) {
+			highestKey = k;
+		}
+
 		// Assign threads
 		if (nodecount == 1) {
 			simpleThread(root);
 		}
 		else if (nodecount > 1) {
-			cout << "Calling standardThread" << endl;
 			standardThread(root, k);
 		}
 
@@ -229,24 +241,26 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 		return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
 	}
 	if (k < root->key()) { // If the new node key is less than the root key, left turn
-		if (root->lcThreadStatus() == true) { // if the left child pointer is threaded, make a new node
-			root->lcIsThreaded(false); // // Set the thread status of the new parent's left child to false
-			return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
+		if (root->lcThreadStatus() == true) { // If the "node" there isn't real because the thread status is true
+			root->lcIsThreaded(false); // Set the thread status of the parent to false because that's where we will insert the new node
+			BSTNode<Key, E>* temp = new BSTNode<Key, E>(k, it, false, NULL, false, NULL); // Insert the new node without any threads
+			root->setLeft(temp); // Set it as the left node of the current root (the new node's parent)
 		}
-		else {
-			root->setLeft(inserthelp(root->left(), k, it));  // Run down the left subtree to find an empty left child
+		else { // There's actually a regular node there, keep traversing
+			root->setLeft(inserthelp(root->left(), k, it));
 		}
 	}
 	else { // If the new node key is greater than the root key, right turn
-		if (root->rcThreadStatus() == true) { // if the left child pointer is threaded, make a new node
-			root->rcIsThreaded(false); // Set the thread status of the new parent's right child to false
-			return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
+		if (root->rcThreadStatus() == true) { // If the "node" there isn't real because the thread status is true
+			root->rcIsThreaded(false); // Set the thread status of the parent to false because that's where we will insert the new node
+			BSTNode<Key, E>* temp = new BSTNode<Key, E>(k, it, false, NULL, false, NULL); // Insert the new node without any threads
+			root->setRight(temp); // Set it as the right node of the current root (the new node's parent)
 		}
-		else {
-			root->setRight(inserthelp(root->right(), k, it)); // Run down the right subtree
+		else {// There's actually a regular node there, keep traversing
+			root->setRight(inserthelp(root->right(), k, it));
 		}
 	}
-	return root;       // Return tree with node inserted
+	return root; // Return tree with node inserted
 }
 
 //// Print inorder
@@ -271,30 +285,6 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 //	printReverse(root->left(), level + 1);   // Do left subtree
 //}
 
-// Find the left most node
-template <typename Key, typename E>
-const Key& BST<Key, E>::getLeftMostNode(BSTNode <Key, E>* root) {
-	if (root == NULL) return NULL;
-	if (root->left() != NULL) {
-		getLeftMostNode(root);
-	}
-	else {
-		return root->key();
-	}
-}
-
-// Find the right most node
-template <typename Key, typename E>
-const Key& BST<Key, E>::getRightMostNode(BSTNode <Key, E>* root) {
-	if (root == NULL) return NULL;
-	if (root->right() != NULL) {
-		getRightMostNode(root);
-	}
-	else {
-		return root->key();
-	}
-}
-
 // Assign the successor and set the context variable
 template <typename Key, typename E>
 void BST<Key, E>::simpleThread(BSTNode <Key, E>* root) {
@@ -302,34 +292,58 @@ void BST<Key, E>::simpleThread(BSTNode <Key, E>* root) {
 	root->lcIsThreaded(true); // Threaded back to itself
 	root->setRight(root); // Set right thread to root
 	root->rcIsThreaded(true); // Threaded back to itself
-	cout << "Root left child is " << root->left()->key() << endl;
-	cout << "Root right child is " << root->right()->key() << endl;
 	return;
-
 }
 
 // Assign the successor and set the context variable
 template <typename Key, typename E>
 void BST<Key, E>::standardThread(BSTNode <Key, E>* root, const Key& k) {
-	// Get a reference to the new node
+	// Get pointers to the new node and its parent
 	BSTNode<Key, E>* temp = getNode(root, k);
+	BSTNode<Key, E>* par = getParent(root, k);
 
-	// If the node isn't the left-most node
-	if (getLeftMostNode(root) != k) {
+	// If the node is the left-most node (the first node printed when printing in order)
+	if (lowestKey == k) {
+		temp->lcIsThreaded(true); 
+		temp->setLeft(temp); // Thread left most node's left child to itself
+		temp->rcIsThreaded(true); 
+		temp->setRight(findSuccessor(root, temp, NULL)); // Thread left most node's right child to its inorder successor
+	}
+	// If the node is the right-most node (the last node printed when printing in order)
+	if (highestKey == k) {
+		temp->lcIsThreaded(true);
+		temp->setLeft(findPredecessor(root, temp, NULL)); // Thread right most node's left child to its inorder successor
+		temp->rcIsThreaded(true);
+		temp->setRight(temp); // Thread right most node's right child to itself
+	}
+	// If the node is not the left or right most node
+	if (lowestKey != k && highestKey != k) {
 		// Find the predecessor
-
-	}
-	if (getRightMostNode(root) != k) {
+		BSTNode<Key, E>* pred = findPredecessor(root, temp, NULL);
+		// Assign the predecessor to the left thread
+		temp->setLeft(pred);
+		temp->lcIsThreaded(true);
 		// Find the successor
-
+		BSTNode<Key, E>* succ = findSuccessor(root, temp, NULL);
+		// Assign the successor to the left thread
+		temp->setRight(succ);
+		temp->rcIsThreaded(true);
 	}
+
+	// Adjust the parent
+	if (par->left() == temp) { // If the new node was inserted as the left child of the parent
+		par->lcIsThreaded(false);
+	}
+	else if (par->right() == temp) { // If the new node was inserted as the right child of the parent
+		par->rcIsThreaded(false);
+	}
+	return;
 }
 
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::getNode(BSTNode<Key, E>* root, const Key& k) {
 	if (root == NULL) return NULL;
 	if (root->key() == k) {
-		cout << "found node " << k << " in getNode" << endl;
 		return root;
 	}
 	if (root->key() > k) {
@@ -340,67 +354,62 @@ BSTNode<Key, E>* BST<Key, E>::getNode(BSTNode<Key, E>* root, const Key& k) {
 		root = root->right();
 		getNode(root, k);
 	}
+}
 
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::getParent(BSTNode<Key, E>* root, const Key& k) {
+	if (root == NULL) return NULL;
+	if (root->left()->key() == k || root->right()->key() == k) {
+		return root;
+	}
+	if (root->key() > k) {
+		root = root->left();
+		getParent(root, k);
+	}
+	else if (root->key() < k) {
+		root = root->right();
+		getParent(root, k);
+	}
 }
 
 // Find the inorder predecessor
 // Citation: https://www.geeksforgeeks.org/inorder-predecessor-successor-given-key-bst/
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode <Key, E>* root, BSTNode<Key, E>* predecessor = NULL) {
-	if (root == NULL) return;
-	BSTNode<Key, E>* left = root->left();
-	BSTNode<Key, E>* right = root->right();
-	if (left != NULL) {
-		BSTNode<Key, E>* temp = left;
-		while (temp->right() != NULL) {
-			temp = temp->right();
+BSTNode<Key, E>* BST<Key, E>::findPredecessor(BSTNode <Key, E>* root, BSTNode<Key, E>* nodeInQuestion, BSTNode<Key, E>* predecessor = NULL) {
+	if (root == NULL) return NULL;
+	while (root != NULL) {
+		if (nodeInQuestion->key() > root->key()) {
+			predecessor = root;
+			root = root->right();
 		}
-		predecessor = temp;
-	}
-	if (right != NULL) {
-		BSTNode<Key, E>* temp2 = right;
-		while (temp2->left() != NULL) {
-			temp2 = temp2->left();
+		else if (nodeInQuestion->key() < root->key()) {
+			root = root->left();
 		}
-		successor = temp2;
+		else {
+			break;
+		}
 	}
-	if (predecessor != NULL) {
-		setThreadedPredecessor(root, predecessor);
-	}
-	if (successor != NULL) {
-		setThreadedSuccessor(root, successor);
-	}
-	return;
+	return predecessor;
 }
 
 // Find the inorder successor
 // Citation: https://www.geeksforgeeks.org/inorder-predecessor-successor-given-key-bst/
 template <typename Key, typename E>
-BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode <Key, E>* root, BSTNode<Key, E>* successor = NULL) {
-	if (root == NULL) return;
-	BSTNode<Key, E>* left = root->left();
-	BSTNode<Key, E>* right = root->right();
-	if (left != NULL) {
-		BSTNode<Key, E>* temp = left;
-		while (temp->right() != NULL) {
-			temp = temp->right();
+BSTNode<Key, E>* BST<Key, E>::findSuccessor(BSTNode <Key, E>* root, BSTNode<Key, E>* nodeInQuestion, BSTNode<Key, E>* successor = NULL) {
+	if (root == NULL) return NULL;
+	while (root != NULL) {
+		if (nodeInQuestion->key() < root->key()) {
+			successor = root;
+			root = root->left();
 		}
-		predecessor = temp;
-	}
-	if (right != NULL) {
-		BSTNode<Key, E>* temp2 = right;
-		while (temp2->left() != NULL) {
-			temp2 = temp2->left();
+		else if (nodeInQuestion->key() > root->key()) {
+			root = root->right();
 		}
-		successor = temp2;
+		else {
+			break;
+		}
 	}
-	if (predecessor != NULL) {
-		setThreadedPredecessor(root, predecessor);
-	}
-	if (successor != NULL) {
-		setThreadedSuccessor(root, successor);
-	}
-	return;
+	return successor;
 }
 
 #endif
