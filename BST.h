@@ -287,6 +287,7 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 }
 
 // Print inorder
+// Citation: https://www.geeksforgeeks.org/threaded-binary-tree/
 template <typename Key, typename E>
 void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root) const {
 	if (root == NULL) return;           // Empty tree
@@ -325,6 +326,7 @@ BSTNode<Key, E>* BST<Key, E>::leftMostChildInRightSubtree(BSTNode<Key, E>* root)
 }
 
 // Print Reverse
+// Citation: https://www.geeksforgeeks.org/threaded-binary-tree/
 template <typename Key, typename E>
 void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root) const {
 	if (root == NULL) return;           // Empty tree
