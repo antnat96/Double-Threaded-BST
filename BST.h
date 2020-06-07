@@ -46,6 +46,8 @@ private:
   void printInorderHelp(BSTNode<Key, E>*) const;
   void printReverseHelp(BSTNode<Key, E>*) const;
   BSTNode<Key, E>* leftMostChildInRightSubtree(BSTNode<Key, E>*) const;
+  BSTNode<Key, E>* rightMostChildInLeftSubtree(BSTNode<Key, E>*) const;
+
 
 public:
 	BST() {  // Constructor
@@ -341,14 +343,23 @@ void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root) const {
 
 	while (curr != NULL) { // While current node is a node
 		cout << curr->element() << endl; // Print its info
-		if (curr->rcThreadStatus() == true && curr->right() != NULL) {
-			curr = curr->right();
+		if (curr->lcThreadStatus() == true && curr->left() != NULL) {
+			curr = curr->left();
 		}
 		else {
-			curr = leftMostChildInRightSubtree(curr->right());
+			curr = rightMostChildInLeftSubtree(curr->left());
 		}
 	}
 	return;
+}
+
+template <typename Key, typename E>
+BSTNode<Key, E>* BST<Key, E>::rightMostChildInLeftSubtree(BSTNode<Key, E>* root) const {
+	if (root == NULL) return NULL;
+	while (root->right() != NULL && root->rcThreadStatus() == false) {
+		root = root->right();
+	}
+	return root;
 }
 
 // Assign the successor and set the context variable
