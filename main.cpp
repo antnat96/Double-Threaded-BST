@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 		"seventy-nine","sixty-eight","sixty-seven","sixty-nine","ninety",
 		"eighty-five","eighty-three","eighty-seven","sixty-five" };
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 2; i++) {
 		myBST.insert(intArr[i], strArr[i]);
 	}
 
