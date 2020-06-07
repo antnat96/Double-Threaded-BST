@@ -37,7 +37,8 @@ private:
   void standardThread(BSTNode<Key, E>*, const Key&);
   BSTNode<Key, E>* findPredecessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
   BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*);
-  Key* getLeftMostNode(BSTNode <Key, E>* root);
+  const Key& getLeftMostNode(BSTNode <Key, E>* root);
+  const Key& getRightMostNode(BSTNode <Key, E>* root);
   BSTNode<Key, E>* getNode(BSTNode<Key, E>* root, const Key&);
   //void printInorder(BSTNode<Key, E>*, int) const;
   //void printReverse(BSTNode<Key, E>*, int) const;
@@ -229,7 +230,7 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 	}
 	if (k < root->key()) { // If the new node key is less than the root key, left turn
 		if (root->lcThreadStatus() == true) { // if the left child pointer is threaded, make a new node
-			root->lcIsThreaded(false); // Set it to false
+			root->lcIsThreaded(false); // // Set the thread status of the new parent's left child to false
 			return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
 		}
 		else {
@@ -238,7 +239,7 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 	}
 	else { // If the new node key is greater than the root key, right turn
 		if (root->rcThreadStatus() == true) { // if the left child pointer is threaded, make a new node
-			root->rcIsThreaded(false); // Set it to false
+			root->rcIsThreaded(false); // Set the thread status of the new parent's right child to false
 			return new BSTNode<Key, E>(k, it, false, NULL, false, NULL);
 		}
 		else {
@@ -270,12 +271,24 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 //	printReverse(root->left(), level + 1);   // Do left subtree
 //}
 
-// Assign the successor and set the context variable
+// Find the left most node
 template <typename Key, typename E>
-Key* BST<Key, E>::getLeftMostNode(BSTNode <Key, E>* root) {
-	if (root == NULL) return;
+const Key& BST<Key, E>::getLeftMostNode(BSTNode <Key, E>* root) {
+	if (root == NULL) return NULL;
 	if (root->left() != NULL) {
 		getLeftMostNode(root);
+	}
+	else {
+		return root->key();
+	}
+}
+
+// Find the right most node
+template <typename Key, typename E>
+const Key& BST<Key, E>::getRightMostNode(BSTNode <Key, E>* root) {
+	if (root == NULL) return NULL;
+	if (root->right() != NULL) {
+		getRightMostNode(root);
 	}
 	else {
 		return root->key();
@@ -299,12 +312,22 @@ void BST<Key, E>::simpleThread(BSTNode <Key, E>* root) {
 template <typename Key, typename E>
 void BST<Key, E>::standardThread(BSTNode <Key, E>* root, const Key& k) {
 	// Get a reference to the new node
-	getNode(root, k);
+	BSTNode<Key, E>* temp = getNode(root, k);
+
+	// If the node isn't the left-most node
+	if (getLeftMostNode(root) != k) {
+		// Find the predecessor
+
+	}
+	if (getRightMostNode(root) != k) {
+		// Find the successor
+
+	}
 }
 
 template <typename Key, typename E>
 BSTNode<Key, E>* BST<Key, E>::getNode(BSTNode<Key, E>* root, const Key& k) {
-	if (root == NULL) return root;
+	if (root == NULL) return NULL;
 	if (root->key() == k) {
 		cout << "found node " << k << " in getNode" << endl;
 		return root;
