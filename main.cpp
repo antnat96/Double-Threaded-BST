@@ -36,9 +36,13 @@ int main(int argc, char** argv) {
 
 	cout << "Size of my BST is " << myBST.size() << "\n" << endl;
 
-	cout << "My tree's structure is: (tests changes to print function)" << endl;
+	cout << "My tree's structure is: (tests changes to printHelp function)" << endl;
 
 	myBST.print();
+
+	cout << "\nInorder printing of my tree: (tests right threads and printInorderHelp function)" << endl;
+
+	myBST.printInorder();
 
 	//cout << "\n" << "Clearing my BST..." << endl;
 

@@ -41,8 +41,8 @@ private:
   BSTNode<Key, E>* findSuccessor(BSTNode<Key, E>*, BSTNode<Key, E>*, BSTNode<Key, E>*);
   BSTNode<Key, E>* getNode(BSTNode<Key, E>*, const Key&);
   BSTNode<Key, E>* getParent(BSTNode<Key, E>*, const Key&);
-  void printInorderHelp(BSTNode<Key, E>*, int) const;
-  void printReverseHelp(BSTNode<Key, E>*, int) const;
+  void printInorderHelp(BSTNode<Key, E>*) const;
+  void printReverseHelp(BSTNode<Key, E>*) const;
 
 public:
 	BST() {  // Constructor
@@ -148,7 +148,8 @@ public:
 		if (root == NULL) cout << "The BST is empty.\n";
 		else {
 			cout << "Printing inorder..." << endl;
-			printInorderHelp(root, 0);
+			printInorderHelp(root);
+			cout << "printed" << endl;
 		}
 	}
 
@@ -287,24 +288,72 @@ BSTNode<Key, E>* BST<Key, E>::inserthelp(BSTNode<Key, E>* root, const Key& k, co
 
 // Print inorder
 template <typename Key, typename E>
-void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root, int level) const {
+void BST<Key, E>::printInorderHelp(BSTNode<Key, E>* root) const {
 	if (root == NULL) return;           // Empty tree
-	printInorder(root->left(), level + 1);   // Do left subtree
-	for (int i = 0; i < level; i++)         // Indent to level
-		cout << "  ";
-	cout << root->key() << "\n";        // Print node value
-	printInorder(root->right(), level + 1);  // Do right subtree
+
+	BSTNode<Key, E>* rootCopy = root;
+
+	// Find where to begin by looking for the node with the lowest key
+	BSTNode<Key, E>* startingPlace = NULL;
+	while (startingPlace == NULL) {
+		if (root->lcThreadStatus() != true) {
+			root = root->left();
+		}
+		else {
+			startingPlace = root;
+		}
+	}
+	BSTNode<Key, E>* curr = startingPlace;
+
+	// Find where to stop by looking for the node with the highest key
+	BSTNode<Key, E>* endingPlace = NULL;
+	while (endingPlace == NULL) {
+		if (rootCopy->rcThreadStatus() != true) {
+			rootCopy = rootCopy->right();
+		}
+		else {
+			endingPlace = rootCopy;
+		}
+	}
+	BSTNode<Key, E>* curr2 = endingPlace;
+
+	//while (curr != NULL) {
+	//	
+	//}
+	
+	return;
 }
 
 // Print Reverse
 template <typename Key, typename E>
-void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root, int level) const {
+void BST<Key, E>::printReverseHelp(BSTNode<Key, E>* root) const {
 	if (root == NULL) return;           // Empty tree
-	printReverse(root->right(), level + 1);  // Do right subtree
-	for (int i = 0; i < level; i++)         // Indent to level
-		cout << "  ";
-	cout << root->key() << "\n";        // Print node value
-	printReverse(root->left(), level + 1);   // Do left subtree
+
+	// Find where to begin by looking for the node with the lowest key
+	BSTNode<Key, E>* startingPlace = NULL;
+	while (startingPlace == NULL) {
+		if (root->lcThreadStatus() != true) {
+			root = root->left();
+		}
+		else {
+			startingPlace = root;
+		}
+	}
+	BSTNode<Key, E>* curr = startingPlace;
+
+	// Print the starting element
+	cout << curr->element() << endl;
+	// Once it is found, follow the right threads up
+	while (curr->right() != curr) { // Stops when a node points to itself (the highest node)
+		// Print the right child element
+		cout << curr->right()->element() << endl;
+		// Set current to the right child element
+		curr = curr->right();
+	}
+
+	return;
+
+
 }
 
 // Assign the successor and set the context variable
