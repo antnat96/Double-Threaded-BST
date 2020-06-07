@@ -12,6 +12,8 @@
 
 using namespace std;
 
+void PauseScreen(); //Used to pause screen output
+
 int main(int argc, char** argv) {
 
 	cout << "Anthony Natale -- CSIS 215 Programming Assignment 2 -- Double Threaded Binary Tree" << "\n" << endl;
@@ -48,13 +50,15 @@ int main(int argc, char** argv) {
 
 	myBST.printReverse();
 
-	//cout << "\n" << "Clearing my BST..." << endl;
-
-	//myBST.clear();
-
-	//cout << "Cleared!" << endl;
-
-	//cout << "Size of my BST is " << myBST.size() << endl;
+	PauseScreen();
 
 	return 0;
+}
+
+//Used to pause the screen wherever desired
+void PauseScreen()
+{
+	char ch;
+	cout << "\nPress the Enter key to continue ... ";
+	cin.get(ch);
 }
